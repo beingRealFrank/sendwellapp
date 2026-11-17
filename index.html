@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Free Shopify order confirmation email template designer | Sendwell</title>
+<meta name="description" content="Design a branded Shopify order confirmation, shipping confirmation or refund email in your browser, see it live, and copy a ready-to-paste template. Free, no install, no signup.">
+<link rel="canonical" href="https://beingrealfrank.github.io/sendwellapp/">
+<style>
+  :root { --ink:#1d2024; --muted:#5d6670; --line:#e2e4e7; --brand:#1f6f5c; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color:var(--ink); background:#fafaf8; }
+  header, main, footer { max-width:1180px; margin:0 auto; padding:0 20px; }
+  header { padding-top:28px; }
+  h1 { font-size:30px; line-height:1.2; margin:0 0 8px; }
+  .lede { color:var(--muted); max-width:760px; margin:0 0 18px; font-size:16px; }
+  .tabs { display:flex; gap:6px; flex-wrap:wrap; margin:6px 0 14px; }
+  .tabs button, .btn { font:inherit; border:1px solid var(--line); background:#fff; padding:8px 14px; border-radius:8px; cursor:pointer; }
+  .tabs button[aria-selected=true] { background:var(--ink); color:#fff; border-color:var(--ink); }
+  .btn.primary { background:var(--brand); border-color:var(--brand); color:#fff; font-weight:600; }
+  .grid { display:grid; grid-template-columns:minmax(260px,330px) 1fr; gap:18px; align-items:start; }
+  .panel { background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; }
+  label { display:block; font-weight:600; font-size:13px; margin:12px 0 4px; }
+  input[type=text], select, textarea { width:100%; font:inherit; padding:8px 10px; border:1px solid #c9cccf; border-radius:8px; }
+  .colors { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .colors input { width:100%; height:36px; padding:2px; border:1px solid #c9cccf; border-radius:8px; }
+  .check { display:flex; gap:8px; align-items:center; font-weight:400; }
+  .hint { font-size:12px; color:var(--muted); margin-top:4px; }
+  .bar { display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
+  .stat { margin-left:auto; font-size:12px; color:var(--muted); }
+  .stage { display:flex; justify-content:center; background:#eef0f2; border-radius:10px; padding:12px; }
+  iframe { border:0; background:#fff; border-radius:8px; width:100%; max-width:680px; height:900px; transition:width .2s; }
+  .steps { margin-top:14px; }
+  .steps ol { padding-left:20px; margin:8px 0; }
+  .copyrow { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+  section.more { max-width:780px; margin:36px auto 0; }
+  section.more h2 { font-size:21px; margin:28px 0 8px; }
+  footer { color:var(--muted); font-size:13px; padding:36px 20px 40px; }
+  a { color:var(--brand); }
+  @media (max-width:860px) { .grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Free Shopify email template designer</h1>
+  <p class="lede">Design a branded order confirmation, shipping confirmation or refund email, watch it update as you type, then copy a template you paste into Shopify under <em>Settings › Notifications</em>. Free, nothing to install, no signup. It uses Shopify's own email variables, so every order fills in by itself.</p>
+</header>
+<main>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div class="grid">
+    <div class="panel">
+      <div class="hint">Colors, font, logo and footer apply to all three emails.</div>
+      <div class="colors" style="margin-top:8px">
+        <div><label for="brandColor">Brand</label><input type="color" id="brandColor"></div>
+        <div><label for="backgroundColor">Background</label><input type="color" id="backgroundColor"></div>
+        <div><label for="textColor">Text</label><input type="color" id="textColor"></div>
+      </div>
+      <label for="font">Font</label>
+      <select id="font">
+        <option value='Georgia, "Times New Roman", serif'>Georgia (classic)</option>
+        <option value="Arial, Helvetica, sans-serif">Arial (clean)</option>
+        <option value='"Trebuchet MS", Arial, sans-serif'>Trebuchet (friendly)</option>
+        <option value="Verdana, Geneva, sans-serif">Verdana (wide)</option>
+      </select>
+      <label for="logoUrl">Logo URL</label>
+      <input type="text" id="logoUrl" placeholder="https://… (empty: your store name)">
+      <div class="hint">In Shopify: Content › Files, upload your logo, copy its link.</div>
+      <label for="footer">Footer</label>
+      <input type="text" id="footer">
+      <label class="check"><input type="checkbox" id="showAddress"> Show shipping address</label>
+      <div id="copyTitle" style="border-top:1px solid var(--line);margin-top:14px;padding-top:10px;font-weight:600;font-size:13px"></div>
+      <label for="heading">Heading</label>
+      <input type="text" id="heading">
+      <div class="hint" id="hint"></div>
+      <label for="intro">Message</label>
+      <textarea id="intro" rows="3"></textarea>
+      <label for="buttonText">Button</label>
+      <input type="text" id="buttonText">
+    </div>
+    <div>
+      <div class="panel">
+        <div class="bar">
+          <button class="btn" id="desk" aria-pressed="true">Desktop</button>
+          <button class="btn" id="mob" aria-pressed="false">Mobile</button>
+          <span class="stat" id="stat">Loading…</span>
+        </div>
+        <div class="stage"><iframe id="frame" title="Email preview" sandbox="allow-same-origin"></iframe></div>
+      </div>
+      <div class="panel steps">
+        <strong>Use it in your store</strong>
+        <ol>
+          <li>Click <em>Copy template</em>.</li>
+          <li>In Shopify admin go to <em>Settings › Notifications › Customer notifications</em> and open <em id="where"></em>, then <em>Edit code</em>.</li>
+          <li>Select all of the existing code, paste, and click <em>Save</em>. Use <em>Send test email</em> to see it in your inbox.</li>
+        </ol>
+        <div class="copyrow">
+          <button class="btn primary" id="copy">Copy template</button>
+          <span class="stat" id="copied" style="margin-left:0"></span>
+        </div>
+        <textarea id="manual" hidden readonly rows="8" style="margin-top:10px;font-family:ui-monospace,Menlo,monospace;font-size:12px"></textarea>
+        <p class="hint" style="margin-top:12px">Keep a copy of Shopify's original code first if you might want it back (Shopify also has <em>Revert to default</em>). Want to change the design later without pasting again? The Sendwell app for Shopify (coming soon) keeps your design in your store and updates every email from one screen.</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="more">
+    <h2>What the template does</h2>
+    <p>It is plain Shopify Liquid built on Shopify's notification variables (<code>line_items</code>, <code>order_name</code>, <code>shipping_address</code>, <code>fulfillment.tracking_numbers</code>, <code>refund_line_items</code> and the rest). Every order fills in its own items, prices, address and links. Nothing is loaded from outside Shopify, and the email works in Gmail, Outlook and Apple Mail with table-based layout and inline styles.</p>
+    <h2>Guides</h2>
+    <ul>
+      <li><a href="guides/customize-shopify-order-confirmation-email/">How to customize the Shopify order confirmation email</a></li>
+      <li><a href="guides/shopify-shipping-confirmation-email-tracking/">Shopify shipping confirmation email with a tracking button</a></li>
+      <li><a href="guides/switch-shopify-email-template-app/">Switching from a Shopify email template app to a pasted template</a></li>
+      <li><a href="guides/shopify-refund-notification-email-template/">Shopify refund notification email: variables and a branded template</a></li>
+      <li><a href="guides/remove-default-title-shopify-order-email/">How to remove "Default Title" from Shopify order emails</a></li>
+      <li><a href="guides/shopify-order-confirmation-email-font-center/">Change the font and center the Shopify order confirmation email</a></li>
+      <li><a href="guides/shopify-notification-templates-api/">Can you edit Shopify notification templates through the API?</a></li>
+    </ul>
+  </section>
+</main>
+<footer>Sendwell · a free tool for Shopify merchants · Visits are counted with GoatCounter (no cookies, no personal data). Not affiliated with Shopify.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/liquidjs@10.30.1/dist/liquid.browser.min.js"></script>
+<script type="module">
+import { buildDesign, DEFAULT_BRAND, DEFAULT_COPY } from './lib/design.js';
+import { makeEngine, renderEmail } from './lib/render.js';
+import { TEMPLATES, TEMPLATE_KEYS } from './lib/engine-versions.js';
+import { sampleFor } from './lib/samples.js';
+import { standaloneTemplate } from './lib/standalone.js';
+
+const count = (path) => window.goatcounter && window.goatcounter.count && window.goatcounter.count({ path, event: true });
+const [order, ...engineSrc] = await Promise.all([
+  fetch('./lib/sample_order.json').then((r) => r.json()),
+  ...TEMPLATE_KEYS.map((t) => fetch(`./lib/${t}.liquid`).then((r) => r.text())),
+]);
+const ENGINES = Object.fromEntries(TEMPLATE_KEYS.map((t, i) => [t, engineSrc[i]]));
+const liquid = makeEngine(window.liquidjs.Liquid);
+const $ = (id) => document.getElementById(id);
+const brand = { ...DEFAULT_BRAND };
+const copy = structuredClone(DEFAULT_COPY);
+let template = new URLSearchParams(location.search).get('email');
+if (!TEMPLATES[template]) template = 'order_confirmation';
+let used = false, design = null;
+
+const tabs = $('tabs');
+for (const t of TEMPLATE_KEYS) {
+  const b = document.createElement('button');
+  b.textContent = TEMPLATES[t].title; b.role = 'tab'; b.dataset.t = t;
+  b.onclick = () => { template = t; sync(); schedule(); };
+  tabs.append(b);
+}
+const BRAND_IDS = ['brandColor', 'backgroundColor', 'textColor', 'font', 'logoUrl', 'footer', 'showAddress'];
+const COPY_IDS = ['heading', 'intro', 'buttonText'];
+function sync() {
+  for (const b of tabs.children) b.setAttribute('aria-selected', String(b.dataset.t === template));
+  for (const k of BRAND_IDS) { const el = $(k); if (el.type === 'checkbox') el.checked = !!brand[k]; else el.value = brand[k]; }
+  for (const k of COPY_IDS) $(k).value = copy[template][k];
+  $('copyTitle').textContent = `${TEMPLATES[template].title} wording`;
+  $('where').textContent = TEMPLATES[template].title;
+  $('hint').textContent = template === 'refund_notification' ? '[[first_name]] and [[refund_amount]] fill in automatically.' : "[[first_name]] becomes the customer's name.";
+}
+const touched = () => { if (!used) { used = true; count('tool_run'); } };
+for (const k of BRAND_IDS) $(k).addEventListener('input', (e) => { brand[k] = e.target.type === 'checkbox' ? e.target.checked : e.target.value; touched(); schedule(); });
+for (const k of COPY_IDS) $(k).addEventListener('input', (e) => { copy[template][k] = e.target.value; touched(); schedule(); });
+
+let pending = false;
+function schedule() { if (!pending) { pending = true; requestAnimationFrame(render); } }
+async function render() {
+  pending = false;
+  const t0 = performance.now();
+  design = buildDesign({ ...brand, ...copy[template] }, { template });
+  const html = await renderEmail(liquid, ENGINES[template], sampleFor(template, order), design);
+  $('frame').srcdoc = html;
+  $('stat').textContent = `Sample order · rendered in ${(performance.now() - t0).toFixed(1)} ms`;
+}
+$('frame').onload = () => { const d = $('frame').contentDocument; if (d) $('frame').style.height = d.documentElement.scrollHeight + 4 + 'px'; };
+$('desk').onclick = () => { $('frame').style.width = '100%'; $('desk').setAttribute('aria-pressed', 'true'); $('mob').setAttribute('aria-pressed', 'false'); };
+$('mob').onclick = () => { $('frame').style.width = '390px'; $('mob').setAttribute('aria-pressed', 'true'); $('desk').setAttribute('aria-pressed', 'false'); };
+$('copy').onclick = async () => {
+  const src = standaloneTemplate(ENGINES[template], design);
+  count(`copy_${template}`);
+  const viaApi = () => Promise.race([navigator.clipboard.writeText(src).then(() => true), new Promise((r) => setTimeout(() => r(false), 1500))]).catch(() => false);
+  const viaSelect = () => { const t = document.createElement('textarea'); t.value = src; t.style.position = 'fixed'; t.style.opacity = '0'; document.body.append(t); t.select(); let ok = false; try { ok = document.execCommand('copy'); } catch {} t.remove(); return ok; };
+  const ok = (navigator.clipboard && await viaApi()) || viaSelect();
+  const box = $('manual');
+  if (ok) { $('copied').textContent = 'Copied. Paste it into Shopify.'; box.hidden = true; }
+  else { $('copied').textContent = 'Your browser blocked copying: select the code below and copy it.'; box.value = src; box.hidden = false; box.focus(); box.select(); }
+  setTimeout(() => ($('copied').textContent = ''), 6000);
+};
+sync(); render();
+</script>
+<script data-goatcounter="https://sendwell.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

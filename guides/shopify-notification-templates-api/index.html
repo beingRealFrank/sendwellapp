@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Can you edit Shopify notification templates through the API? | Sendwell</title>
+<meta name="description" content="Why there is no Admin API for Shopify&#x27;s notification email templates, what the API Terms say about automating the admin, and the metafield route that lets an API change what your emails show.">
+<link rel="canonical" href="https://beingrealfrank.github.io/sendwellapp/guides/shopify-notification-templates-api/">
+<style>
+body { margin:0; font:16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color:#1d2024; background:#fafaf8; }
+main { max-width:760px; margin:0 auto; padding:28px 20px 40px; }
+h1 { font-size:30px; line-height:1.2; margin:8px 0 6px; } h2 { font-size:21px; margin:30px 0 8px; }
+.meta { color:#5d6670; font-size:13px; } a { color:#1f6f5c; }
+code, pre { font-family:ui-monospace, Menlo, monospace; font-size:13.5px; background:#f0f1f2; border-radius:5px; }
+code { padding:1px 5px; } pre { padding:12px 14px; overflow:auto; }
+.cta { background:#fff; border:1px solid #e2e4e7; border-radius:12px; padding:16px 18px; margin:26px 0; }
+.cta a.btn { display:inline-block; background:#1f6f5c; color:#fff; text-decoration:none; padding:9px 16px; border-radius:8px; font-weight:600; }
+footer { color:#5d6670; font-size:13px; max-width:760px; margin:0 auto; padding:0 20px 40px; }
+</style>
+</head>
+<body>
+<main>
+<div class="meta"><a href="../../">Sendwell</a> · Guides · Updated November 16, 2026</div>
+<h1>Can you edit Shopify notification templates through the API?</h1>
+<p>Short answer: no. As of November 2026 there is no Admin API endpoint, REST or GraphQL, that reads or writes the templates under <em>Settings › Notifications</em>. Developers have asked for one on Shopify's developer forum for years; staff have passed the requests on, and nothing has shipped.</p>
+<h2>Why not just script the admin?</h2>
+<p>The admin saves templates through an internal endpoint. Calling it from a script or a browser bot breaks Shopify's API Terms, which forbid bypassing API restrictions "including automating administrative functions of the Merchant Store Admin". Apps also may not ask merchants for their admin credentials. So every email template app ends with the same step: the merchant pastes the code and clicks <em>Save</em>.</p>
+<h2>What does work: templates that read shop metafields</h2>
+<p>Notification templates can read the store's own metafields, and the Admin API can write those with <code>metafieldsSet</code>. So you paste a template once that pulls its content from metafields, and after that the API changes what the email shows, without touching the template again.</p>
+<pre>&lt;p&gt;{{ shop.metafields.emails.order_intro }}&lt;/p&gt;
+&lt;style&gt;{{ shop.metafields.emails.css }}&lt;/style&gt;</pre>
+<p>What we measured on a Basic plan store (November 2026):</p>
+<ul>
+<li>Read metafields with the plain form, <code>shop.metafields.ns.key</code>. Adding <code>.value</code> renders nothing.</li>
+<li><code>json</code> metafields are parsed: read keys directly, like <code>shop.metafields.ns.cfg.heading</code>. Printing the whole object gives a Ruby-style hash.</li>
+<li>Multi-line text metafields cap at 65,536 characters. A JSON metafield holding a 307,206-character HTML string was accepted and rendered in Shopify's preview.</li>
+<li>Changing only the metafields changed the real delivered email. No Shopify Plus needed.</li>
+<li>Use your own namespace (we used a custom one throughout).</li>
+</ul>
+<h2>Keep the Liquid in the template</h2>
+<p>Put order variables in the template and plain placeholders in the metafield, then swap them with <code>replace</code>:</p>
+<pre>{{ shop.metafields.emails.cfg.heading | replace: '[[first_name]]', customer.first_name }}</pre>
+<p>That way the metafield is just text and markup, and every order still fills in its own name, items and links.</p>
+<h2>One catch with styles</h2>
+<p>Shopify moves CSS inline when it sends the email. A double quote inside an inline <code>style</code> attribute, such as a font stack with <code>"Times New Roman"</code>, ends the attribute early and the styles after it vanish. Use single quotes there.</p>
+<p>This is the approach the Sendwell app is built on: paste once, then change the design from the app. The free designer below gives you a plain pasted template if you'd rather not use an app at all.</p>
+<div class="cta"><strong>Skip the hand-editing.</strong> Design the email in your browser with a live preview and copy a ready-to-paste template: free, no install.<br><br><a class="btn" href="../../?email=order_confirmation">Open the free designer</a></div>
+</main>
+<footer>Sendwell · a free tool for Shopify merchants · Visits are counted with GoatCounter (no cookies, no personal data). Not affiliated with Shopify.</footer>
+<script data-goatcounter="https://sendwell.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shopify shipping confirmation email with a tracking button | Sendwell</title>
+<meta name="description" content="The Liquid variables behind Shopify&#x27;s shipping confirmation email (tracking numbers, carrier, tracking links, shipped items) and how to build a clear Track your package button.">
+<link rel="canonical" href="https://beingrealfrank.github.io/sendwellapp/guides/shopify-shipping-confirmation-email-tracking/">
+<style>
+body { margin:0; font:16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color:#1d2024; background:#fafaf8; }
+main { max-width:760px; margin:0 auto; padding:28px 20px 40px; }
+h1 { font-size:30px; line-height:1.2; margin:8px 0 6px; } h2 { font-size:21px; margin:30px 0 8px; }
+.meta { color:#5d6670; font-size:13px; } a { color:#1f6f5c; }
+code, pre { font-family:ui-monospace, Menlo, monospace; font-size:13.5px; background:#f0f1f2; border-radius:5px; }
+code { padding:1px 5px; } pre { padding:12px 14px; overflow:auto; }
+.cta { background:#fff; border:1px solid #e2e4e7; border-radius:12px; padding:16px 18px; margin:26px 0; }
+.cta a.btn { display:inline-block; background:#1f6f5c; color:#fff; text-decoration:none; padding:9px 16px; border-radius:8px; font-weight:600; }
+footer { color:#5d6670; font-size:13px; max-width:760px; margin:0 auto; padding:0 20px 40px; }
+</style>
+</head>
+<body>
+<main>
+<div class="meta"><a href="../../">Sendwell</a> · Guides · Updated November 16, 2026</div>
+<h1>Shopify shipping confirmation email with a tracking button</h1>
+<p>Shopify sends the <em>Shipping confirmation</em> email when you fulfill items with the customer notification turned on. Its template has a <code>fulfillment</code> object with everything about that shipment.</p>
+<h2>The variables</h2>
+<pre>{{ fulfillment.tracking_company }}        UPS
+{{ fulfillment.tracking_numbers | first }} 1Z999AA10123456784
+{{ fulfillment.tracking_urls | first }}    the carrier's tracking page
+{{ fulfillment.tracking_url }}             also available for a single number
+{{ fulfillment.item_count }}
+{{ fulfillment.estimated_delivery_at }}    only with some carriers and carrier-calculated rates
+{% for line in fulfillment.fulfillment_line_items %}
+  {{ line.line_item.title }} × {{ line.quantity }}
+{% endfor %}</pre>
+<p>Note the loop: each fulfillment line wraps the order's line item, so titles and images are under <code>line.line_item</code>, while <code>line.quantity</code> is the quantity in this shipment (it can be less than ordered on a partial shipment).</p>
+<h2>A tracking button that never breaks</h2>
+<pre>{% assign number = fulfillment.tracking_numbers | first | default: '' %}
+{% assign url = fulfillment.tracking_urls | first | default: fulfillment.tracking_url %}
+{% if url == blank %}{% assign url = order_status_url %}{% endif %}
+{% if number != '' %}
+  &lt;p&gt;{{ fulfillment.tracking_company | default: 'Carrier' }} tracking number: &lt;strong&gt;{{ number }}&lt;/strong&gt;&lt;/p&gt;
+  &lt;a href="{{ url }}" style="background:#1f6f5c;color:#fff;padding:12px 26px;border-radius:6px"&gt;Track your package&lt;/a&gt;
+{% else %}
+  &lt;a href="{{ order_status_url }}"&gt;View your order&lt;/a&gt;
+{% endif %}</pre>
+<p>Why the fallbacks: a manual fulfillment can have a number but no tracking link (unknown carrier), or no number at all. Falling back to the order status page means the button always goes somewhere useful.</p>
+<h2>Multiple tracking numbers</h2>
+<p>One fulfillment can carry several numbers. Loop over <code>fulfillment.tracking_numbers</code> and use <code>fulfillment.tracking_urls[forloop.index0]</code> for the matching link.</p>
+<h2>Testing</h2>
+<p>Fulfill a test order with a tracking number and the customer notification on; the email arrives within minutes. <em>Send test email</em> on the template uses sample data.</p>
+<div class="cta"><strong>Skip the hand-editing.</strong> Design the email in your browser with a live preview and copy a ready-to-paste template: free, no install.<br><br><a class="btn" href="../../?email=shipping_confirmation">Open the free designer</a></div>
+</main>
+<footer>Sendwell · a free tool for Shopify merchants · Visits are counted with GoatCounter (no cookies, no personal data). Not affiliated with Shopify.</footer>
+<script data-goatcounter="https://sendwell.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+{%- comment -%}
+  Sendwell engine v2 · Shipping confirmation
+  Paste this once into Settings > Notifications > Shipping confirmation > Edit code.
+  The design lives in the shop metafield sendwell.shipping_confirmation (JSON: css, layout,
+  item_row, tracking_block, no_tracking_block), which the Sendwell app updates. Order and
+  shipment data come from Shopify's own variables.
+  If the design is missing, or needs a newer engine than this one, a plain fallback is sent
+  so the email never breaks.
+{%- endcomment -%}
+{%- assign sw_engine = 2 -%}
+{%- assign sw = shop.metafields.sendwell.shipping_confirmation -%}
+{%- assign sw_layout = sw.layout | append: '' -%}
+{%- if sw.min_engine > sw_engine -%}{%- assign sw_layout = '' -%}{%- endif -%}
+{%- assign sw_tracking_number = fulfillment.tracking_numbers | first | default: '' -%}
+{%- assign sw_tracking_url = fulfillment.tracking_urls | first | default: '' -%}
+{%- if sw_tracking_url == '' -%}{%- assign sw_tracking_url = fulfillment.tracking_url | default: order_status_url -%}{%- endif -%}
+{%- if sw_layout == '' -%}
+<!DOCTYPE html><html><body style="font-family:Arial,Helvetica,sans-serif">
+<p>Hi {{ customer.first_name | default: 'there' }}, your order {{ order_name }} is on the way.</p>
+{%- if sw_tracking_number != '' %}
+<p>Tracking number: <a href="{{ sw_tracking_url }}">{{ sw_tracking_number }}</a></p>
+{%- endif %}
+<p><a href="{{ order_status_url }}">View your order</a></p>
+<p>{{ shop.name }}</p>
+</body></html>
+{%- else -%}
+{%- assign sw_item_row = sw.item_row | append: '' -%}
+{%- assign sw_rows = '' -%}
+{%- for sw_fl in fulfillment.fulfillment_line_items -%}
+  {%- assign line = sw_fl.line_item -%}
+  {%- assign sw_img = '' -%}
+  {%- if line.image -%}{%- assign sw_img = line.image | img_url: 'compact_cropped' -%}{%- endif -%}
+  {%- assign sw_title = line.title | escape -%}
+  {%- assign sw_variant = line.variant_title | default: '' | escape -%}
+  {%- if sw_variant == 'Default Title' -%}{%- assign sw_variant = '' -%}{%- endif -%}
+  {%- assign sw_variant_sep = '' -%}
+  {%- if sw_variant != '' -%}{%- assign sw_variant_sep = sw_variant | append: ' · ' -%}{%- endif -%}
+  {%- assign sw_qty = sw_fl.quantity | append: '' -%}
+  {%- assign sw_price = line.final_price | times: sw_fl.quantity | money -%}
+  {%- assign sw_row = sw_item_row
+      | replace: '[[item_title]]', sw_title
+      | replace: '[[item_variant_sep]]', sw_variant_sep
+      | replace: '[[item_variant]]', sw_variant
+      | replace: '[[item_qty]]', sw_qty
+      | replace: '[[item_price]]', sw_price
+      | replace: '[[item_image]]', sw_img -%}
+  {%- assign sw_rows = sw_rows | append: sw_row -%}
+{%- endfor -%}
+{%- if sw_tracking_number != '' -%}
+  {%- assign sw_tracking = sw.tracking_block | append: '' -%}
+{%- else -%}
+  {%- assign sw_tracking = sw.no_tracking_block | append: '' -%}
+{%- endif -%}
+{%- capture sw_address -%}
+  {%- if shipping_address -%}
+    {{- shipping_address.name | escape }}<br>{{ shipping_address.address1 | escape }}{% if shipping_address.address2 != blank %}<br>{{ shipping_address.address2 | escape }}{% endif %}<br>{{ shipping_address.city | escape }} {{ shipping_address.province_code }} {{ shipping_address.zip }}<br>{{ shipping_address.country | escape -}}
+  {%- endif -%}
+{%- endcapture -%}
+{%- assign sw_first = customer.first_name | default: 'there' | escape -%}
+{%- assign sw_date = created_at | date: '%B %-d, %Y' -%}
+{%- assign sw_company = fulfillment.tracking_company | default: 'Carrier' | escape -%}
+{%- assign sw_number = sw_tracking_number | escape -%}
+{%- assign sw_shop = shop.name | escape -%}
+{%- assign sw_html = sw_layout
+    | replace: '[[tracking]]', sw_tracking
+    | replace: '[[items]]', sw_rows
+    | replace: '[[tracking_company]]', sw_company
+    | replace: '[[tracking_number]]', sw_number
+    | replace: '[[tracking_url]]', sw_tracking_url
+    | replace: '[[first_name]]', sw_first
+    | replace: '[[order_name]]', order_name
+    | replace: '[[order_date]]', sw_date
+    | replace: '[[shipping_address]]', sw_address
+    | replace: '[[order_status_url]]', order_status_url
+    | replace: '[[shop_name]]', sw_shop -%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ sw_shop }}</title>
+<style>{{ sw.css }}</style>
+</head>
+<body style="margin:0;padding:0">
+{{ sw_html }}
+</body>
+</html>
+{%- endif -%}

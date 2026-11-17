@@ -1,0 +1,76 @@
+{%- comment -%}
+  Sendwell engine v2 · Order refund
+  Paste this once into Settings > Notifications > Order refund > Edit code.
+  The design lives in the shop metafield sendwell.refund_notification (JSON: css, layout,
+  item_row, refunded_items_block), which the Sendwell app updates. Order and refund data
+  come from Shopify's own variables.
+  If the design is missing, or needs a newer engine than this one, a plain fallback is sent
+  so the email never breaks.
+{%- endcomment -%}
+{%- assign sw_engine = 2 -%}
+{%- assign sw = shop.metafields.sendwell.refund_notification -%}
+{%- assign sw_layout = sw.layout | append: '' -%}
+{%- if sw.min_engine > sw_engine -%}{%- assign sw_layout = '' -%}{%- endif -%}
+{%- assign sw_amount = amount | money -%}
+{%- if sw_layout == '' -%}
+<!DOCTYPE html><html><body style="font-family:Arial,Helvetica,sans-serif">
+<p>Hi {{ customer.first_name | default: 'there' }}, we've refunded {{ sw_amount }} for your order {{ order_name }}.</p>
+<p><a href="{{ order_status_url }}">View your order</a></p>
+<p>{{ shop.name }}</p>
+</body></html>
+{%- else -%}
+{%- assign sw_item_row = sw.item_row | append: '' -%}
+{%- assign sw_rows = '' -%}
+{%- for sw_rl in refund_line_items -%}
+  {%- assign line = sw_rl.line_item -%}
+  {%- assign sw_img = '' -%}
+  {%- if line.image -%}{%- assign sw_img = line.image | img_url: 'compact_cropped' -%}{%- endif -%}
+  {%- assign sw_title = line.title | escape -%}
+  {%- assign sw_variant = line.variant_title | default: '' | escape -%}
+  {%- if sw_variant == 'Default Title' -%}{%- assign sw_variant = '' -%}{%- endif -%}
+  {%- assign sw_variant_sep = '' -%}
+  {%- if sw_variant != '' -%}{%- assign sw_variant_sep = sw_variant | append: ' · ' -%}{%- endif -%}
+  {%- assign sw_qty = sw_rl.quantity | append: '' -%}
+  {%- assign sw_price = line.final_price | times: sw_rl.quantity | money -%}
+  {%- assign sw_row = sw_item_row
+      | replace: '[[item_title]]', sw_title
+      | replace: '[[item_variant_sep]]', sw_variant_sep
+      | replace: '[[item_variant]]', sw_variant
+      | replace: '[[item_qty]]', sw_qty
+      | replace: '[[item_price]]', sw_price
+      | replace: '[[item_image]]', sw_img -%}
+  {%- assign sw_rows = sw_rows | append: sw_row -%}
+{%- endfor -%}
+{%- assign sw_refunded = '' -%}
+{%- if sw_rows != '' -%}{%- assign sw_refunded = sw.refunded_items_block | append: '' -%}{%- endif -%}
+{%- capture sw_address -%}
+  {%- if shipping_address -%}
+    {{- shipping_address.name | escape }}<br>{{ shipping_address.address1 | escape }}{% if shipping_address.address2 != blank %}<br>{{ shipping_address.address2 | escape }}{% endif %}<br>{{ shipping_address.city | escape }} {{ shipping_address.province_code }} {{ shipping_address.zip }}<br>{{ shipping_address.country | escape -}}
+  {%- endif -%}
+{%- endcapture -%}
+{%- assign sw_first = customer.first_name | default: 'there' | escape -%}
+{%- assign sw_date = created_at | date: '%B %-d, %Y' -%}
+{%- assign sw_shop = shop.name | escape -%}
+{%- assign sw_html = sw_layout
+    | replace: '[[refunded_items]]', sw_refunded
+    | replace: '[[items]]', sw_rows
+    | replace: '[[refund_amount]]', sw_amount
+    | replace: '[[first_name]]', sw_first
+    | replace: '[[order_name]]', order_name
+    | replace: '[[order_date]]', sw_date
+    | replace: '[[shipping_address]]', sw_address
+    | replace: '[[order_status_url]]', order_status_url
+    | replace: '[[shop_name]]', sw_shop -%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ sw_shop }}</title>
+<style>{{ sw.css }}</style>
+</head>
+<body style="margin:0;padding:0">
+{{ sw_html }}
+</body>
+</html>
+{%- endif -%}

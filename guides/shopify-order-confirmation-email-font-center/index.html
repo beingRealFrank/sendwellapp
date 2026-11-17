@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Change the font and center the Shopify order confirmation email | Sendwell</title>
+<meta name="description" content="Which fonts actually show up in customers&#x27; inboxes, how to set them in a Shopify notification without breaking the styles, and how to center the email, logo and button so it holds in Gmail and Outlook.">
+<link rel="canonical" href="https://beingrealfrank.github.io/sendwellapp/guides/shopify-order-confirmation-email-font-center/">
+<style>
+body { margin:0; font:16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color:#1d2024; background:#fafaf8; }
+main { max-width:760px; margin:0 auto; padding:28px 20px 40px; }
+h1 { font-size:30px; line-height:1.2; margin:8px 0 6px; } h2 { font-size:21px; margin:30px 0 8px; }
+.meta { color:#5d6670; font-size:13px; } a { color:#1f6f5c; }
+code, pre { font-family:ui-monospace, Menlo, monospace; font-size:13.5px; background:#f0f1f2; border-radius:5px; }
+code { padding:1px 5px; } pre { padding:12px 14px; overflow:auto; }
+.cta { background:#fff; border:1px solid #e2e4e7; border-radius:12px; padding:16px 18px; margin:26px 0; }
+.cta a.btn { display:inline-block; background:#1f6f5c; color:#fff; text-decoration:none; padding:9px 16px; border-radius:8px; font-weight:600; }
+footer { color:#5d6670; font-size:13px; max-width:760px; margin:0 auto; padding:0 20px 40px; }
+</style>
+</head>
+<body>
+<main>
+<div class="meta"><a href="../../">Sendwell</a> · Guides · Updated November 16, 2026</div>
+<h1>Change the font and center the Shopify order confirmation email</h1>
+<p>Shopify's branding settings change the logo and accent color, not the font or the layout. Both live in the template code: <em>Settings › Notifications › Customer notifications › Order confirmation › Edit code</em>. Save a copy of the body before you start.</p>
+<h2>Fonts that actually arrive</h2>
+<p>Gmail and Outlook ignore most custom web fonts, so a font loaded from Google Fonts may show in Apple Mail and fall back everywhere else. Pick a font stack that degrades well:</p>
+<pre>Georgia, 'Times New Roman', serif          classic
+Arial, Helvetica, sans-serif               clean
+'Trebuchet MS', Arial, sans-serif          friendly
+Verdana, Geneva, sans-serif                wide, very readable</pre>
+<p>If you do use a web font, put it first and keep a stack like the ones above behind it.</p>
+<h2>Set it once, with single quotes</h2>
+<p>Shopify moves CSS inline when it sends the email, into <code>style="…"</code> attributes. A double quote inside a font name ends that attribute early and the styles after it disappear. So write font names with single quotes everywhere: in the <code>&lt;style&gt;</code> block and in inline styles.</p>
+<pre>&lt;style&gt;
+  body, td, p, a, h1, h2 { font-family: Georgia, 'Times New Roman', serif; }
+&lt;/style&gt;</pre>
+<p>Setting it on <code>td</code> matters: some clients don't inherit the font from <code>body</code> into tables.</p>
+<h2>Center the email</h2>
+<p><code>margin: 0 auto</code> on a <code>div</code> works in Gmail and Apple Mail but not in Outlook for Windows. Use a full-width table with a centered, fixed-width table inside:</p>
+<pre>&lt;table role="presentation" width="100%" cellpadding="0" cellspacing="0"&gt;&lt;tr&gt;
+  &lt;td align="center"&gt;
+    &lt;table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%; max-width:600px"&gt;
+      &lt;tr&gt;&lt;td style="padding:24px"&gt; … your content … &lt;/td&gt;&lt;/tr&gt;
+    &lt;/table&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;&lt;/table&gt;</pre>
+<p>The 600px width with <code>max-width</code> keeps it readable on desktop and lets it shrink on phones.</p>
+<h2>Center the logo and the button</h2>
+<pre>&lt;td align="center"&gt;
+  &lt;img src="https://cdn.shopify.com/…/logo.png" width="160" alt="{{ shop.name }}" style="display:block; margin:0 auto; border:0"&gt;
+&lt;/td&gt;</pre>
+<p>Give the image a <code>width</code> attribute (Outlook ignores CSS widths on images) and <code>display:block</code> to avoid a gap under it. For a button, put the link in a centered cell: <code>&lt;td align="center"&gt;&lt;a href="{{ order_status_url }}" style="display:inline-block; padding:12px 26px; background:#1f6f5c; color:#ffffff; text-decoration:none; border-radius:6px"&gt;View your order&lt;/a&gt;&lt;/td&gt;</code>.</p>
+<h2>Centering only the heading</h2>
+<p>Use <code>text-align:center</code> on the cell or heading, not the <code>&lt;center&gt;</code> tag, and leave the item list left-aligned: centered prices are hard to scan.</p>
+<div class="cta"><strong>Skip the hand-editing.</strong> Design the email in your browser with a live preview and copy a ready-to-paste template: free, no install.<br><br><a class="btn" href="../../?email=order_confirmation">Open the free designer</a></div>
+</main>
+<footer>Sendwell · a free tool for Shopify merchants · Visits are counted with GoatCounter (no cookies, no personal data). Not affiliated with Shopify.</footer>
+<script data-goatcounter="https://sendwell.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

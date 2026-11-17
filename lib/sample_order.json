@@ -1,0 +1,43 @@
+{
+  "shop": {
+    "name": "Juniper & Pine",
+    "email": "hello@juniperandpine.example"
+  },
+  "customer": {
+    "first_name": "Maya"
+  },
+  "order_name": "#1042",
+  "created_at": "2026-11-14T15:20:00Z",
+  "order_status_url": "https://juniperandpine.example/orders/1042",
+  "line_items": [
+    {
+      "title": "Cedar & Smoke Candle",
+      "variant_title": "Large",
+      "quantity": 2,
+      "final_line_price": 6400,
+      "image": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27112%27%20height%3D%27112%27%3E%3Crect%20width%3D%27112%27%20height%3D%27112%27%20rx%3D%2712%27%20fill%3D%27%23e9dccb%27/%3E%3Ctext%20x%3D%2756%27%20y%3D%2764%27%20font-family%3D%27Georgia%27%20font-size%3D%2715%27%20text-anchor%3D%27middle%27%20fill%3D%27%237a5a3a%27%3ECandle%3C/text%3E%3C/svg%3E",
+      "final_price": 3200
+    },
+    {
+      "title": "Linen Table Runner",
+      "variant_title": "Default Title",
+      "quantity": 1,
+      "final_line_price": 4800,
+      "image": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27112%27%20height%3D%27112%27%3E%3Crect%20width%3D%27112%27%20height%3D%27112%27%20rx%3D%2712%27%20fill%3D%27%23dfe7e2%27/%3E%3Ctext%20x%3D%2756%27%20y%3D%2764%27%20font-family%3D%27Georgia%27%20font-size%3D%2715%27%20text-anchor%3D%27middle%27%20fill%3D%27%233f6152%27%3ELinen%3C/text%3E%3C/svg%3E",
+      "final_price": 4800
+    }
+  ],
+  "subtotal_price": 11200,
+  "shipping_price": 800,
+  "tax_price": 672,
+  "total_price": 12672,
+  "shipping_address": {
+    "name": "Maya Chen",
+    "address1": "18 Orchard Lane",
+    "address2": "",
+    "city": "Doylestown",
+    "province_code": "PA",
+    "zip": "18901",
+    "country": "United States"
+  }
+}

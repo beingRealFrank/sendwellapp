@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Switching from a Shopify email template app to a pasted template | Sendwell</title>
+<meta name="description" content="How Shopify email template apps work, what happens to your emails when you uninstall one, and how to move to a template you own in a few minutes.">
+<link rel="canonical" href="https://beingrealfrank.github.io/sendwellapp/guides/switch-shopify-email-template-app/">
+<style>
+body { margin:0; font:16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color:#1d2024; background:#fafaf8; }
+main { max-width:760px; margin:0 auto; padding:28px 20px 40px; }
+h1 { font-size:30px; line-height:1.2; margin:8px 0 6px; } h2 { font-size:21px; margin:30px 0 8px; }
+.meta { color:#5d6670; font-size:13px; } a { color:#1f6f5c; }
+code, pre { font-family:ui-monospace, Menlo, monospace; font-size:13.5px; background:#f0f1f2; border-radius:5px; }
+code { padding:1px 5px; } pre { padding:12px 14px; overflow:auto; }
+.cta { background:#fff; border:1px solid #e2e4e7; border-radius:12px; padding:16px 18px; margin:26px 0; }
+.cta a.btn { display:inline-block; background:#1f6f5c; color:#fff; text-decoration:none; padding:9px 16px; border-radius:8px; font-weight:600; }
+footer { color:#5d6670; font-size:13px; max-width:760px; margin:0 auto; padding:0 20px 40px; }
+</style>
+</head>
+<body>
+<main>
+<div class="meta"><a href="../../">Sendwell</a> · Guides · Updated November 16, 2026</div>
+<h1>Switching from a Shopify email template app to a pasted template</h1>
+<p>Shopify doesn't let apps edit your notification templates: there is no API for it. So every email template app works the same way underneath: it gives you Liquid code, and you (or a browser helper) paste it into <em>Settings › Notifications</em>. That has two useful consequences.</p>
+<h2>Uninstalling the app doesn't change your emails</h2>
+<p>The pasted code lives in your store, not in the app. If you uninstall, your emails keep sending exactly as they are. The only exception is a template that loads images or settings from the app's own servers; check the code for image links that aren't on <code>cdn.shopify.com</code> and replace them.</p>
+<h2>Before you switch</h2>
+<ol>
+<li>For each email you customized (order confirmation, shipping confirmation, refund and any others), open <em>Edit code</em> and save a copy of the current body and subject.</li>
+<li>Note what you liked: logo size, colors, wording, extra sections such as a discount code or a review request.</li>
+</ol>
+<h2>Switch in a few minutes</h2>
+<ol>
+<li>Open the <a href="../../">free designer</a>, set your brand color, font, logo link and wording, and check the preview for each email.</li>
+<li>Copy the template, open the same email in Shopify, select all of the code, paste and <em>Save</em>.</li>
+<li>Send yourself a test, then place or resend a real test order.</li>
+</ol>
+<p>If anything looks wrong, paste your saved copy back or click <em>Revert to default</em>.</p>
+<h2>What to look for in any template</h2>
+<ul>
+<li>Plain Liquid on Shopify's own variables, so it keeps working if any outside service goes away.</li>
+<li>Table-based layout with inline styles (Outlook ignores most modern CSS).</li>
+<li>Handles products without variants (no "Default Title") and orders without a shipping address.</li>
+</ul>
+<div class="cta"><strong>Skip the hand-editing.</strong> Design the email in your browser with a live preview and copy a ready-to-paste template: free, no install.<br><br><a class="btn" href="../../?email=order_confirmation">Open the free designer</a></div>
+</main>
+<footer>Sendwell · a free tool for Shopify merchants · Visits are counted with GoatCounter (no cookies, no personal data). Not affiliated with Shopify.</footer>
+<script data-goatcounter="https://sendwell.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

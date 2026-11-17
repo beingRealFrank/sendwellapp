@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shopify refund notification email: variables and a branded template | Sendwell</title>
+<meta name="description" content="When Shopify sends the refund notification, the Liquid variables it gets (amount, refunded items), a working item loop, and how to test it without refunding a real customer.">
+<link rel="canonical" href="https://beingrealfrank.github.io/sendwellapp/guides/shopify-refund-notification-email-template/">
+<style>
+body { margin:0; font:16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color:#1d2024; background:#fafaf8; }
+main { max-width:760px; margin:0 auto; padding:28px 20px 40px; }
+h1 { font-size:30px; line-height:1.2; margin:8px 0 6px; } h2 { font-size:21px; margin:30px 0 8px; }
+.meta { color:#5d6670; font-size:13px; } a { color:#1f6f5c; }
+code, pre { font-family:ui-monospace, Menlo, monospace; font-size:13.5px; background:#f0f1f2; border-radius:5px; }
+code { padding:1px 5px; } pre { padding:12px 14px; overflow:auto; }
+.cta { background:#fff; border:1px solid #e2e4e7; border-radius:12px; padding:16px 18px; margin:26px 0; }
+.cta a.btn { display:inline-block; background:#1f6f5c; color:#fff; text-decoration:none; padding:9px 16px; border-radius:8px; font-weight:600; }
+footer { color:#5d6670; font-size:13px; max-width:760px; margin:0 auto; padding:0 20px 40px; }
+</style>
+</head>
+<body>
+<main>
+<div class="meta"><a href="../../">Sendwell</a> · Guides · Updated November 16, 2026</div>
+<h1>Shopify refund notification email: variables and a branded template</h1>
+<p>The refund notification is the email customers get when you refund an order and leave <em>Send a notification to the customer</em> checked. It is easy to forget, so many stores still send Shopify's plain default after branding the order confirmation.</p>
+<h2>Where it lives</h2>
+<p><em>Settings › Notifications › Customer notifications › Refund</em> (listed under order exceptions), then <em>Edit code</em>. Like every notification it has a subject and an HTML body in Liquid. Save a copy of the body before you change it.</p>
+<h2>The variables it gets</h2>
+<pre>{{ amount | money }}          the amount refunded this time (not the order total)
+{{ order_name }}             #1042
+{{ customer.first_name }}
+{{ order_status_url }}
+{% for refund_line in refund_line_items %}
+  {{ refund_line.line_item.title }}
+  {{ refund_line.quantity }}       how many of that item were refunded
+  {{ refund_line.line_item.final_price | times: refund_line.quantity | money }}
+{% endfor %}</pre>
+<p>Two things trip people up. First, <code>refund_line_items</code> holds only what was refunded in <em>this</em> refund, so a partial refund lists only those items; use it instead of <code>line_items</code>, which is the whole order. Second, the item details sit one level down under <code>.line_item</code>.</p>
+<h2>Refunds without items</h2>
+<p>A refund of shipping only, or a goodwill amount, has an empty <code>refund_line_items</code>. Wrap the item table so it doesn't render empty:</p>
+<pre>{% if refund_line_items.size > 0 %}
+  &lt;!-- the item table --&gt;
+{% endif %}
+&lt;p&gt;We refunded {{ amount | money }} to your original payment method.&lt;/p&gt;</pre>
+<h2>What to say</h2>
+<p>Customers open a refund email to check three things: how much, for what, and when it will arrive. Put the amount in the heading, list the items, and say that banks usually take a few business days to show it. A link to <code>{{ order_status_url }}</code> saves you a support email.</p>
+<h2>Testing without a real customer</h2>
+<p><em>Send test email</em> uses sample data. For a real check, place a test order with your own email (Bogus Gateway or a draft order marked paid), refund one item with the notification on, and look at the email in your inbox.</p>
+<p>The same mistakes that break the order confirmation apply here: double quotes inside <code>style</code> attributes, flexbox layouts and "Default Title" on products without variants. See <a href="../customize-shopify-order-confirmation-email/">customizing the order confirmation email</a>.</p>
+<div class="cta"><strong>Skip the hand-editing.</strong> Design the email in your browser with a live preview and copy a ready-to-paste template: free, no install.<br><br><a class="btn" href="../../?email=refund_notification">Open the free designer</a></div>
+</main>
+<footer>Sendwell · a free tool for Shopify merchants · Visits are counted with GoatCounter (no cookies, no personal data). Not affiliated with Shopify.</footer>
+<script data-goatcounter="https://sendwell.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
